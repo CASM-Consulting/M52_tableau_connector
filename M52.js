@@ -50,6 +50,7 @@
         }).success(function (){
             var tableInfo = {
                 id: "M52Feed",
+		alias: "table",
                 description: "Data from the M52 API",
                 columns: cols
             };
@@ -64,7 +65,7 @@
 
         var getMoreData = function (){
             $.getJSON(apiURL, function (resp){
-                if (resp.Finished){
+                if (resp == "EOF"){
                     console.info("End of data stream");
                     doneCallback();
                 }
