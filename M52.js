@@ -84,7 +84,8 @@
                                 // this is a serialised jodatime Instant
                                 value = value.iMillis;
                             }
-                            cleanedObj[keyName.replace(/\W+/g, "_")] = value;
+                            var cleanKey = keyName.replace(/\W+/g, "_");
+                            cleanedObj[cleanKey] = value;
                         })
 
                         parsedResponse.push(cleanedObj);
