@@ -28,7 +28,7 @@
         // todo how do we handle "java.util.List"?
 
         $.getJSON(apiURL, function (resp){
-            $.each(resp, function (keyName, value){
+            $.each(resp.schema, function (keyName, value){
                 //http://tableau.github.io/webdataconnector/ref/api_ref.html#webdataconnectorapi.columninfo
                 const type = types[value.type.class];
                 if (type == 'java.util.List' || type === undefined){
@@ -50,7 +50,7 @@
         }).success(function (){
             var tableInfo = {
                 id: "M52Feed",
-		alias: "table",
+		        alias: "table",
                 description: "Data from the M52 API",
                 columns: cols
             };
@@ -62,21 +62,21 @@
     myConnector.getData = function (table, doneCallback){
         var params = JSON.parse(tableau.connectionData);
         var apiURL = params.server + "/api/component?access_token=" + params.token;
-
+        var originalURL = apiURL;
         var getMoreData = function (){
             $.getJSON(apiURL, function (resp){
-                if (resp == "EOF"){
+                if (resp.data == "EOF"){
                     console.info("End of data stream");
                     doneCallback();
-                }
-                else{
-                    if (!resp.length){
+                } else {
+                    if (resp.data.length==0){
                         console.info("No new data has been fetched.");
+                    } else {
+                        console.info("Got more data: " + resp.data.length);
                     }
 
-                    console.info("Got more data");
                     var parsedResponse = [];
-                    $.each(resp, function (index, rawObj){
+                    $.each(resp.data, function (index, rawObj){
                         var cleanedObj = new Object();
 
                         $.each(rawObj, function (keyName, value){
@@ -91,6 +91,11 @@
                     });
 
                     table.appendRows(parsedResponse);
+
+                    if (resp.next) {
+                        apiURL = originalURL + "&next=" + resp.next;
+                    }
+
                     getMoreData();
                 }
             }).error(function (jqXHR, textStatus, errorThrown){
