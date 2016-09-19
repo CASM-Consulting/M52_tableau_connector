@@ -14,7 +14,7 @@
         var params = JSON.parse(tableau.connectionData);
         var cols = [];
         // http://stackoverflow.com/questions/3595515/xmlhttprequest-error-origin-null-is-not-allowed-by-access-control-allow-origin
-        var apiURL = params.server + "/access-tokens/handle?target=schema&token=" + params.token;
+        var apiURL = params.server + "/supergui/access-tokens/handle?target=schema&token=" + params.token;
 
         var types = {
             "java.lang.Long": tableau.dataTypeEnum.int,
@@ -61,7 +61,7 @@
 
     myConnector.getData = function (table, doneCallback){
         var params = JSON.parse(tableau.connectionData);
-        var apiURL = params.server + "/access-tokens/handle?token=" + params.token;
+        var apiURL = params.server + "/supergui/access-tokens/handle?token=" + params.token;
         var originalURL = apiURL;
         var getMoreData = function (){
             $.getJSON(apiURL, function (resp){
