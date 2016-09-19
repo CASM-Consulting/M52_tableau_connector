@@ -80,7 +80,7 @@
                         var cleanedObj = new Object();
 
                         $.each(rawObj, function (keyName, value){
-                            if (value.iMillis !== undefined){
+                            if (value != null && value.iMillis !== undefined){
                                 // this is a serialised jodatime Instant
                                 value = value.iMillis;
                             }
