@@ -81,7 +81,7 @@
             "java.lang.Double": tableau.dataTypeEnum.float,
             "java.lang.String": tableau.dataTypeEnum.string,
             "java.lang.Boolean": tableau.dataTypeEnum.bool,
-            "org.joda.time.Instant": tableau.dataTypeEnum.date,
+            "org.joda.time.Instant": tableau.dataTypeEnum.datetime,
             "java.util.List": tableau.dataTypeEnum.string
         }
 
@@ -154,13 +154,13 @@
                                 value = value.iMillis;
                             }
                             var cleanKey = keyName.replace(/\W+/g, "_");
-                            if(cleanKey in columnTypes && value != null) {
+                            if(value != null && cleanKey in columnTypes) {
                                 if(columnTypes[cleanKey] == "java.util.List") {
                                     value = JSON.stringify(value);
                                 }
                                 cleanedObj[cleanKey] = value;
                             }
-                        })
+                        });
 
                         parsedResponse.push(cleanedObj);
                     });
