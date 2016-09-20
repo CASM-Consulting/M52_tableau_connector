@@ -10,11 +10,50 @@
         }
     };
 
-    myConnector.getSchema = function (schemaCallback){
-        var params = JSON.parse(tableau.connectionData);
-        var cols = [];
+    var attachMouseDrag = function() {
+
+        var down = false;
+        var current = [false];
+        var firstDrag = false;
+        $("#keySelection tr")
+        .mousedown(function(ev) {
+           down = true;
+           firstDrag = true;
+           current = $(ev.target).closest("tr");
+           console.log("down");
+        })
+        .mousemove(function(ev) {
+            var el = $(ev.target).closest("tr");
+            if(down && el[0] != current[0]) {
+                current = el;
+                var cb = current.find("input");
+                cb.prop("checked", !cb.prop("checked"));
+                console.log(ev);
+            }
+            if(firstDrag) {
+                var cb = el.find("input");
+                cb.prop("checked", !cb.prop("checked"));
+                firstDrag = false;
+            }
+         })
+        .mouseup(function(ev) {
+            down = false;
+            var el = $(ev.target).closest("tr");
+            if(el[0] = current[0] && ev.target.type != "checkbox" && firstDrag) {
+                var cb = current.find("input");
+                cb.prop("checked", !cb.prop("checked"));
+            }
+            firstDrag = false;
+           console.log("up");
+        });
+    };
+
+    var getSchema = function (){
+        var token = $("#tokenInput").val().trim();
+        var server = $('#serverInput').val().trim();
+
         // http://stackoverflow.com/questions/3595515/xmlhttprequest-error-origin-null-is-not-allowed-by-access-control-allow-origin
-        var apiURL = params.server + "/supergui/access-tokens/handle?target=schema&token=" + params.token;
+        var apiURL = server + "/supergui/access-tokens/handle?target=schema&token=" + token;
 
         var types = {
             "java.lang.Long": tableau.dataTypeEnum.int,
@@ -25,9 +64,12 @@
             "java.lang.Boolean": tableau.dataTypeEnum.bool,
             "org.joda.time.Instant": tableau.dataTypeEnum.date,
         }
-        // todo how do we handle "java.util.List"?
+
+        var cols;
 
         $.getJSON(apiURL, function (resp){
+            cols = [];
+
             $.each(resp.schema, function (keyName, value){
                 //http://tableau.github.io/webdataconnector/ref/api_ref.html#webdataconnectorapi.columninfo
                 const type = types[value.type.class];
@@ -41,22 +83,44 @@
                     description: 'Original name is "' + keyName + '"in',
                     dataType: type
                 });
+                
             });
-            for (var keyName in resp){
-                if (resp.hasOwnProperty(keyName)){
 
-                }
-            }
-        }).success(function (){
-            var tableInfo = {
-                id: "M52Feed",
-		        alias: "table",
-                description: "Data from the M52 API",
-                columns: cols
-            };
+            cols.sort(function(a,b){
+                var textA = a.alias.toUpperCase();
+                var textB = b.alias.toUpperCase();
+                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            });
 
-            schemaCallback([tableInfo]);
+            $.each(cols, function(index, value){
+                $('#keySelection > tbody:last-child').append('<tr data-index="'+index+'"><td>'+value.alias+'</td><td><input type="checkbox"></td></tr>');
+            });
+
+            attachMouseDrag();
+            $("#submitButton").prop('disabled', false);
         });
+    };
+
+    myConnector.getSchema = function (schemaCallback){
+        var params = JSON.parse(tableau.connectionData);
+        var selectedCols = [];
+        // http://stackoverflow.com/questions/3595515/xmlhttprequest-error-origin-null-is-not-allowed-by-access-control-allow-origin
+        // todo how do we handle "java.util.List"?
+        
+        $("#keySelection input[type=checkbox]:checked").each(function(idx, el) {
+            var index = $(el).closest("tr").data("index");
+            selectedCols.push(cols[index]);
+        });
+        var tableInfo = {
+            id: "M52Feed",
+            alias: "table",
+            description: "Data from the M52 API",
+            columns: selectedCols
+        };
+
+        schemaCallback([tableInfo]);
+
+
     };
 
     myConnector.getData = function (table, doneCallback){
@@ -112,6 +176,23 @@
     tableau.registerConnector(myConnector);
 
     $(document).ready(function (){
+
+        $("#toggleSelected").click(function (){
+            $("#keySelection input[type=checkbox]").each(function(i, cb){
+                $(cb).prop("checked", !$(cb).prop("checked"));
+            });
+        });
+        $("#allSelected").click(function (){
+            $("#keySelection input[type=checkbox]").each(function(i, cb){
+                $(cb).prop("checked", true);
+            });
+        });
+
+        $("#checkToken").click(function (){
+
+            getSchema();
+
+        });
         $("#submitButton").click(function (){
             console.log("clicked");
             setupConnector();
