@@ -155,10 +155,10 @@
                             }
                             var cleanKey = keyName.replace(/\W+/g, "_");
                             if(cleanKey in columnTypes && value != null) {
-                                cleanedObj[cleanKey] = value;
                                 if(columnTypes[cleanKey] == "java.util.List") {
                                     value = JSON.stringify(value);
                                 }
+                                cleanedObj[cleanKey] = value;
                             }
                         })
 
