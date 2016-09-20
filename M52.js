@@ -160,7 +160,6 @@
                                     value = JSON.stringify(value);
                                 }
                             }
-                            cleanedObj[cleanKey] = value;
                         })
 
                         parsedResponse.push(cleanedObj);
