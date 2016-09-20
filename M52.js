@@ -82,6 +82,7 @@
             "java.lang.String": tableau.dataTypeEnum.string,
             "java.lang.Boolean": tableau.dataTypeEnum.bool,
             "org.joda.time.Instant": tableau.dataTypeEnum.date,
+            "java.util.List": tableau.dataTypeEnum.string
         }
 
         $.getJSON(apiURL, function (resp){
@@ -90,10 +91,7 @@
             $.each(resp.schema, function (keyName, value){
                 //http://tableau.github.io/webdataconnector/ref/api_ref.html#webdataconnectorapi.columninfo
                 const type = types[value.type.class];
-                if (type == 'java.util.List' || type === undefined){
-                    return true; // continue
-                }
-
+                
                 cols.push({
                     id: keyName.replace(/\W+/g, "_"),
                     alias: keyName,
