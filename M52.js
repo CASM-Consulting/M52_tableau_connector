@@ -95,7 +95,7 @@
                 cols.push({
                     id: keyName.replace(/\W+/g, "_"),
                     alias: keyName,
-                    description: 'Original name is "' + keyName + '"in',
+                    description: value.type.class,
                     dataType: type
                 });
                 
@@ -125,6 +125,13 @@
         var params = JSON.parse(tableau.connectionData);
         var apiURL = params.server + "/supergui/access-tokens/handle?token=" + params.token;
         var originalURL = apiURL;
+
+        var columnTypes = {};
+
+        $.each(table.tableInfo.columns, function(index, value){
+                columnTypes[value.id] = value.description;
+        });
+
         var getMoreData = function (){
             $.getJSON(apiURL, function (resp){
                 if (resp.data == "EOF"){
@@ -147,6 +154,12 @@
                                 value = value.iMillis;
                             }
                             var cleanKey = keyName.replace(/\W+/g, "_");
+                            if(cleanKey in columnTypes) {
+                                cleanedObj[cleanKey] = value;
+                                if(columnTypes[cleanKey] == "java.util.List") {
+                                    value = JSON.stringify(value);
+                                }
+                            }
                             cleanedObj[cleanKey] = value;
                         })
 
