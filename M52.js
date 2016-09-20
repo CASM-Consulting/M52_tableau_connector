@@ -19,9 +19,12 @@
             description: "Data from the M52 API",
             columns: selectedCols
         };
-        tableau.tableInfo = JSON.stringify(tableInfo);
         if (server && token){
-            tableau.connectionData = JSON.stringify({server: server, token: token});
+            tableau.connectionData = JSON.stringify({
+                server: server, 
+                token: token,
+                tableInfo : tableInfo
+            });
             tableau.connectionName = "Method52";
         }
     };
@@ -117,8 +120,7 @@
 
     myConnector.getSchema = function (schemaCallback){
         var params = JSON.parse(tableau.connectionData);
-        var tableInfo = JSON.parse(tableau.tableInfo);
-        schemaCallback([tableInfo]);
+        schemaCallback([params.tableInfo]);
     };
 
     myConnector.getData = function (table, doneCallback){
