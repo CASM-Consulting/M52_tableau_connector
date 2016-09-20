@@ -4,6 +4,21 @@
     setupConnector = function (){
         var server = $('#serverInput').val().trim();
         var token = $('#tokenInput').val().trim();
+            var selectedCols = [];
+        // http://stackoverflow.com/questions/3595515/xmlhttprequest-error-origin-null-is-not-allowed-by-access-control-allow-origin
+        // todo how do we handle "java.util.List"?
+        
+        $("#keySelection input[type=checkbox]:checked").each(function(idx, el) {
+            var index = $(el).closest("tr").data("index");
+            selectedCols.push(cols[index]);
+        });
+        var tableInfo = {
+            id: "M52Feed",
+            alias: "table",
+            description: "Data from the M52 API",
+            columns: selectedCols
+        };
+        tableau.tableInfo = JSON.stringify(tableInfo);
         if (server && token){
             tableau.connectionData = JSON.stringify({server: server, token: token});
             tableau.connectionName = "Method52";
@@ -103,24 +118,8 @@
 
     myConnector.getSchema = function (schemaCallback){
         var params = JSON.parse(tableau.connectionData);
-        var selectedCols = [];
-        // http://stackoverflow.com/questions/3595515/xmlhttprequest-error-origin-null-is-not-allowed-by-access-control-allow-origin
-        // todo how do we handle "java.util.List"?
-        
-        $("#keySelection input[type=checkbox]:checked").each(function(idx, el) {
-            var index = $(el).closest("tr").data("index");
-            selectedCols.push(cols[index]);
-        });
-        var tableInfo = {
-            id: "M52Feed",
-            alias: "table",
-            description: "Data from the M52 API",
-            columns: selectedCols
-        };
 
-        schemaCallback([tableInfo]);
-
-
+        schemaCallback([tableau.tableInfo]);
     };
 
     myConnector.getData = function (table, doneCallback){
