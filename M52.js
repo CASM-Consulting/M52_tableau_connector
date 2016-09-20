@@ -1,10 +1,11 @@
 (function (){
     var myConnector = tableau.makeConnector();
+    var cols;
 
     setupConnector = function (){
         var server = $('#serverInput').val().trim();
         var token = $('#tokenInput').val().trim();
-            var selectedCols = [];
+        var selectedCols = [];
         // http://stackoverflow.com/questions/3595515/xmlhttprequest-error-origin-null-is-not-allowed-by-access-control-allow-origin
         // todo how do we handle "java.util.List"?
         
@@ -35,7 +36,7 @@
            down = true;
            firstDrag = true;
            current = $(ev.target).closest("tr");
-           console.log("down");
+           // console.log("down");
         })
         .mousemove(function(ev) {
             var el = $(ev.target).closest("tr");
@@ -43,7 +44,7 @@
                 current = el;
                 var cb = current.find("input");
                 cb.prop("checked", !cb.prop("checked"));
-                console.log(ev);
+                // console.log(ev);
             }
             if(firstDrag) {
                 var cb = el.find("input");
@@ -59,7 +60,7 @@
                 cb.prop("checked", !cb.prop("checked"));
             }
             firstDrag = false;
-           console.log("up");
+           // console.log("up");
         });
     };
 
@@ -79,8 +80,6 @@
             "java.lang.Boolean": tableau.dataTypeEnum.bool,
             "org.joda.time.Instant": tableau.dataTypeEnum.date,
         }
-
-        var cols;
 
         $.getJSON(apiURL, function (resp){
             cols = [];
@@ -118,8 +117,8 @@
 
     myConnector.getSchema = function (schemaCallback){
         var params = JSON.parse(tableau.connectionData);
-
-        schemaCallback([tableau.tableInfo]);
+        var tableInfo = JSON.parse(tableau.tableInfo);
+        schemaCallback([tableInfo]);
     };
 
     myConnector.getData = function (table, doneCallback){
