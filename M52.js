@@ -129,7 +129,7 @@
         var columnTypes = {};
 
         $.each(table.tableInfo.columns, function(index, value){
-                columnTypes[value.id] = value.description;
+            columnTypes[value.id] = value.description;
         });
 
         var getMoreData = function (){
@@ -154,7 +154,7 @@
                                 value = value.iMillis;
                             }
                             var cleanKey = keyName.replace(/\W+/g, "_");
-                            if(cleanKey in columnTypes) {
+                            if(cleanKey in columnTypes && value != null) {
                                 cleanedObj[cleanKey] = value;
                                 if(columnTypes[cleanKey] == "java.util.List") {
                                     value = JSON.stringify(value);
