@@ -75,7 +75,7 @@
         var apiURL = server + "/supergui/access-tokens/handle?target=schema&token=" + token;
 
         var types = {
-            "java.lang.Long": tableau.dataTypeEnum.string,
+            "java.lang.Long": tableau.dataTypeEnum.int,
             "java.lang.Integer": tableau.dataTypeEnum.int,
             "java.lang.Float": tableau.dataTypeEnum.float,
             "java.lang.Double": tableau.dataTypeEnum.float,
