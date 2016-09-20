@@ -151,7 +151,8 @@
                         $.each(rawObj, function (keyName, value){
                             if (value != null && value.iMillis !== undefined){
                                 // this is a serialised jodatime Instant
-                                value = new Date(value.iMillis).toISOString();
+                                value = new Date(value.iMillis).toISOString().replace("T", " ");
+                                value = value.substr(0, value.indexOf("."));
                             }
                             var cleanKey = keyName.replace(/\W+/g, "_");
                             if(value != null && cleanKey in columnTypes) {
