@@ -114,7 +114,11 @@
             attachMouseDrag();
             $("#submitButton").prop('disabled', false);
         }).error(function (jqXHR, textStatus, errorThrown){
-            alert(textStatus + ": " + errorThrown);
+            var msg;
+            if(jqXHR.responseJSON) {
+                msg = jqXHR.responseJSON.error;
+            }
+            alert(textStatus + ": " + errorThrown + ( msg ? " - " + msg : ""));
         });
     };
 
