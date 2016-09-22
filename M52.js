@@ -113,6 +113,8 @@
 
             attachMouseDrag();
             $("#submitButton").prop('disabled', false);
+        }).error(function (jqXHR, textStatus, errorThrown){
+            alert(textStatus + ": " + errorThrown);
         });
     };
 
